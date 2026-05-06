@@ -100,20 +100,6 @@ export function createRangeConstraint(params: {
 	return null;
 }
 
-export function createSliderRange(params: {
-	max?: number;
-	min?: number;
-	softMax?: number;
-	softMin?: number;
-}): {max: number; min: number} | null {
-	const max = params.softMax ?? params.max;
-	const min = params.softMin ?? params.min;
-	if (!isEmpty(max) && !isEmpty(min)) {
-		return {max, min};
-	}
-	return null;
-}
-
 export function createNumberTextPropsObject(
 	params: NumberTextInputParams,
 	initialValue: number,
@@ -135,8 +121,6 @@ export function createNumberTextInputParamsParser(p: typeof MicroParsers) {
 		max: p.optional.number,
 		min: p.optional.number,
 		pointerScale: p.optional.number,
-		softMax: p.optional.number,
-		softMin: p.optional.number,
 		step: p.optional.number,
 	};
 }

@@ -28,7 +28,7 @@ function getPlugins(css, shouldMinify) {
 			entries: [
 				{
 					find: '@tweakpane/core',
-					replacement: '../core/dist/index.js',
+					replacement: '../../node_modules/@tweakpane/core/dist/index.js',
 				},
 			],
 		}),

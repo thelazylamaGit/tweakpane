@@ -26,7 +26,6 @@ import {
 	createNumberTextInputParamsParser,
 	createNumberTextPropsObject,
 	createRangeConstraint,
-	createSliderRange,
 	createStepConstraint,
 } from '../../common/number/util.js';
 import {ListParamsOptions} from '../../common/params.js';
@@ -108,21 +107,14 @@ export const NumberInputPlugin: InputBindingPlugin<
 			value.rawValue,
 		);
 
-		const sliderRange = createSliderRange(args.params);
-		if (sliderRange) {
-			const drc = c && findConstraint(c, DefiniteRangeConstraint);
+		const drc = c && findConstraint(c, DefiniteRangeConstraint);
+		if (drc) {
 			return new SliderTextController(args.document, {
 				...createSliderTextProps({
 					...textPropsObj,
 					keyScale: createValue(textPropsObj.keyScale),
-					max:
-						args.params.softMax === undefined && drc
-							? drc.values.value('max')
-							: createValue(sliderRange.max),
-					min:
-						args.params.softMin === undefined && drc
-							? drc.values.value('min')
-							: createValue(sliderRange.min),
+					max: drc.values.value('max'),
+					min: drc.values.value('min'),
 				}),
 				parser: parseNumber,
 				value: value,

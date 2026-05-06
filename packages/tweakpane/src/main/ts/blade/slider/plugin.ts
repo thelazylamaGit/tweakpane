@@ -1,10 +1,9 @@
 import {
 	BaseBladeParams,
 	BladePlugin,
-	DefiniteRangeConstraint,
 	createSliderTextProps,
-	createSliderRange,
 	createValue,
+	DefiniteRangeConstraint,
 	Formatter,
 	getSuitablePointerScale,
 	LabeledValueBladeController,
@@ -27,8 +26,6 @@ export interface SliderBladeParams extends BaseBladeParams {
 
 	format?: Formatter<number>;
 	label?: string;
-	softMax?: number;
-	softMin?: number;
 	value?: number;
 }
 
@@ -44,18 +41,12 @@ export const SliderBladePlugin: BladePlugin<SliderBladeParams> = {
 
 			format: p.optional.function as MicroParser<Formatter<number>>,
 			label: p.optional.string,
-			softMax: p.optional.number,
-			softMin: p.optional.number,
 			value: p.optional.number,
 		}));
-		return result && createSliderRange(result) ? {params: result} : null;
+		return result ? {params: result} : null;
 	},
 	controller(args) {
 		const initialValue = args.params.value ?? 0;
-		const sliderRange = createSliderRange(args.params);
-		if (!sliderRange) {
-			throw new Error('Slider range must be specified');
-		}
 		const drc = new DefiniteRangeConstraint({
 			max: args.params.max,
 			min: args.params.min,
@@ -67,14 +58,8 @@ export const SliderBladePlugin: BladePlugin<SliderBladeParams> = {
 			...createSliderTextProps({
 				formatter: args.params.format ?? numberToString,
 				keyScale: createValue(1),
-				max:
-					args.params.softMax === undefined
-						? drc.values.value('max')
-						: createValue(sliderRange.max),
-				min:
-					args.params.softMin === undefined
-						? drc.values.value('min')
-						: createValue(sliderRange.min),
+				max: drc.values.value('max'),
+				min: drc.values.value('min'),
 				pointerScale: getSuitablePointerScale(args.params, initialValue),
 			}),
 			parser: parseNumber,
