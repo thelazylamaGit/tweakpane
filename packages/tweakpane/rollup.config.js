@@ -3,6 +3,7 @@ import {nodeResolve} from '@rollup/plugin-node-resolve';
 import Replace from '@rollup/plugin-replace';
 import Typescript from '@rollup/plugin-typescript';
 import Autoprefixer from 'autoprefixer';
+import Path from 'node:path';
 import Postcss from 'postcss';
 import Cleanup from 'rollup-plugin-cleanup';
 import {terser as Terser} from 'rollup-plugin-terser';
@@ -13,6 +14,10 @@ import Package from './package.json';
 async function compileCss() {
 	const css = Sass.renderSync({
 		file: 'src/main/sass/bundle.scss',
+		includePaths: [
+			Path.resolve('../../../node_modules'),
+			Path.resolve('node_modules'),
+		],
 		outputStyle: 'compressed',
 	}).css.toString();
 
@@ -28,7 +33,7 @@ function getPlugins(css, shouldMinify) {
 			entries: [
 				{
 					find: '@tweakpane/core',
-					replacement: '../../node_modules/@tweakpane/core/dist/index.js',
+					replacement: Path.resolve('../core/dist/index.js'),
 				},
 			],
 		}),
