@@ -52,7 +52,6 @@ export class SliderTextController
 		this.textC_ = new NumberTextController(doc, {
 			parser: config.parser,
 			props: config.textProps,
-			sliderProps: config.sliderProps,
 			value: config.value,
 			viewProps: config.viewProps,
 		});

@@ -11,7 +11,6 @@ import {
 	PointerHandlerEvent,
 } from '../../view/pointer-handler.js';
 import {NumberTextProps, NumberTextView} from '../view/number-text.js';
-import {SliderProps} from '../view/slider.js';
 
 /**
  * @hidden
@@ -19,7 +18,6 @@ import {SliderProps} from '../view/slider.js';
 interface Config {
 	parser: Parser<number>;
 	props: NumberTextProps;
-	sliderProps?: SliderProps;
 	value: Value<number>;
 	viewProps: ViewProps;
 
@@ -36,7 +34,6 @@ export class NumberTextController
 	public readonly value: Value<number>;
 	public readonly view: NumberTextView;
 	public readonly viewProps: ViewProps;
-	private readonly sliderProps_: SliderProps | null;
 	private readonly parser_: Parser<number>;
 	private readonly dragging_: Value<number | null>;
 	private originRawValue_ = 0;
@@ -51,7 +48,6 @@ export class NumberTextController
 
 		this.parser_ = config.parser;
 		this.props = config.props;
-		this.sliderProps_ = config.sliderProps ?? null;
 		this.value = config.value;
 		this.viewProps = config.viewProps;
 
@@ -73,26 +69,13 @@ export class NumberTextController
 		ph.emitter.on('up', this.onPointerUp_);
 	}
 
-	private constrainValue_(value: number): number {
-		const min = this.sliderProps_?.get('min');
-		const max = this.sliderProps_?.get('max');
-		let v = value;
-		if (min !== undefined) {
-			v = Math.max(v, min);
-		}
-		if (max !== undefined) {
-			v = Math.min(v, max);
-		}
-		return v;
-	}
-
 	private onInputChange_(e: Event): void {
 		const inputElem: HTMLInputElement = forceCast(e.currentTarget);
 		const value = inputElem.value;
 
 		const parsedValue = this.parser_(value);
 		if (!isEmpty(parsedValue)) {
-			this.value.rawValue = this.constrainValue_(parsedValue);
+			this.value.rawValue = parsedValue;
 		}
 		this.view.refresh();
 	}
@@ -105,7 +88,7 @@ export class NumberTextController
 		if (step === 0) {
 			return;
 		}
-		this.value.setRawValue(this.constrainValue_(this.value.rawValue + step), {
+		this.value.setRawValue(this.value.rawValue + step, {
 			forceEmit: false,
 			last: false,
 		});
@@ -136,9 +119,7 @@ export class NumberTextController
 		}
 
 		const dx = data.point.x - data.bounds.width / 2;
-		return this.constrainValue_(
-			this.originRawValue_ + dx * this.props.get('pointerScale'),
-		);
+		return this.originRawValue_ + dx * this.props.get('pointerScale');
 	}
 
 	private onPointerMove_(ev: PointerHandlerEvent) {
