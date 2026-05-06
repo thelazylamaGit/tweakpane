@@ -1,10 +1,10 @@
 import {
 	BaseBladeParams,
 	BladePlugin,
-	createSliderRange,
-	createSliderTextProps,
-	createValue,
 	DefiniteRangeConstraint,
+	createSliderTextProps,
+	createSliderRange,
+	createValue,
 	Formatter,
 	getSuitablePointerScale,
 	LabeledValueBladeController,

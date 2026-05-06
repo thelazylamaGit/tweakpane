@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 module.exports = {
 	extends: [
 		'eslint:recommended',
@@ -14,7 +13,8 @@ module.exports = {
 		'no-console': ['warn', {allow: ['warn', 'error']}],
 		'no-unused-vars': 'off',
 		'sort-imports': 'off',
-		'prettier/prettier': ['error', {endOfLine: 'auto'}],
+
+		'prettier/prettier': 'error',
 		'simple-import-sort/imports': 'error',
 		'@typescript-eslint/naming-convention': [
 			'error',

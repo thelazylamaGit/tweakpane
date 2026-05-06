@@ -22,25 +22,20 @@ export type SliderProps = ValueMap<SliderPropsObject>;
 /**
  * @hidden
  */
-export type SliderRange = {
-	max: number;
-	min: number;
-};
+export function getExpandedSliderRange(
+	value: number,
+	min: number,
+	max: number,
+): {max: number; min: number} {
+	return {
+		max: Math.max(max, value),
+		min: Math.min(min, value),
+	};
+}
 
 /**
  * @hidden
  */
-export function createExpandedSliderRange(
-	value: number,
-	min: number,
-	max: number,
-): SliderRange {
-	return {
-		min: Math.min(min, value),
-		max: Math.max(max, value),
-	};
-}
-
 interface Config {
 	props: SliderProps;
 	value: Value<number>;
@@ -57,9 +52,7 @@ export class SliderView implements View {
 	public readonly knobElement: HTMLDivElement;
 	public readonly trackElement: HTMLDivElement;
 	public readonly value: Value<number>;
-
 	private readonly props_: SliderProps;
-	private displayRange_: SliderRange | null = null;
 
 	constructor(doc: Document, config: Config) {
 		this.onChange_ = this.onChange_.bind(this);
@@ -88,44 +81,23 @@ export class SliderView implements View {
 		this.update_();
 	}
 
-	public get defaultRange(): SliderRange {
-		return {
-			min: this.props_.get('min'),
-			max: this.props_.get('max'),
-		};
-	}
-
-	public get displayRange(): SliderRange {
-		return this.displayRange_ ?? this.defaultRange;
-	}
-
-	public setDisplayRange(range: SliderRange | null): void {
-		this.displayRange_ = range;
-		this.update_();
-	}
-
-	public syncDisplayRange(): void {
-		const range = this.defaultRange;
-		const value = this.value.rawValue;
-
-		if (value < range.min || value > range.max) {
-			this.setDisplayRange(
-				createExpandedSliderRange(value, range.min, range.max),
-			);
-		} else {
-			this.setDisplayRange(null);
-		}
-	}
-
 	private update_(): void {
-		const range = this.displayRange;
-
+		const range = getExpandedSliderRange(
+			this.value.rawValue,
+			this.props_.get('min'),
+			this.props_.get('max'),
+		);
 		const p = constrainRange(
-			mapRange(this.value.rawValue, range.min, range.max, 0, 100),
+			mapRange(
+				this.value.rawValue,
+				range.min,
+				range.max,
+				0,
+				100,
+			),
 			0,
 			100,
 		);
-
 		this.knobElement.style.width = `${p}%`;
 	}
 
