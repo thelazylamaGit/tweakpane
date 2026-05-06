@@ -22,6 +22,20 @@ export type SliderProps = ValueMap<SliderPropsObject>;
 /**
  * @hidden
  */
+export function getExpandedSliderRange(
+	value: number,
+	min: number,
+	max: number,
+): {max: number; min: number} {
+	return {
+		max: Math.max(max, value),
+		min: Math.min(min, value),
+	};
+}
+
+/**
+ * @hidden
+ */
 interface Config {
 	props: SliderProps;
 	value: Value<number>;
@@ -68,11 +82,16 @@ export class SliderView implements View {
 	}
 
 	private update_(): void {
+		const range = getExpandedSliderRange(
+			this.value.rawValue,
+			this.props_.get('min'),
+			this.props_.get('max'),
+		);
 		const p = constrainRange(
 			mapRange(
 				this.value.rawValue,
-				this.props_.get('min'),
-				this.props_.get('max'),
+				range.min,
+				range.max,
 				0,
 				100,
 			),

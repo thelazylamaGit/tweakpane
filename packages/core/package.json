@@ -14,13 +14,13 @@
   },
   "scripts": {
     "prepack": "run-s clean build",
-    "prepublishOnly": "npm test",
+    "prepublishOnly": "pnpm test",
     "start": "run-s build watch",
     "test": "run-s test:scss test:ts",
     "build": "run-s build:ts",
     "build:ts": "tsc --project src/tsconfig.json && node scripts/replace-version.js dist/version.js",
     "clean": "rimraf .nyc_output dist tweakpane-core.tgz tweakpane-core-*.tgz",
-    "coverage": "nyc --reporter=text --extension \".ts\" --exclude \"**/*-test.ts\" --exclude \"dist/**/*\" npm run test:ts:dynamic",
+    "coverage": "nyc --reporter=text --extension \".ts\" --exclude \"**/*-test.ts\" --exclude \"dist/**/*\" pnpm run test:ts:dynamic",
     "format": "run-p format:*",
     "format:scss": "prettier --parser scss --write \"lib/sass/**/*.scss\"",
     "format:ts": "eslint --ext .ts --fix \"src/**/*.ts\"",
@@ -33,7 +33,7 @@
     "test:ts:dynamic:inspect": "TS_NODE_CACHE=false TS_NODE_PROJECT=\"src/tsconfig.json\" mocha --require ts-node/register \"src/**/*-test.ts\" --inspect-brk",
     "test:ts:static": "eslint --ext .ts \"src/**/*.ts\"",
     "watch": "run-p watch:*",
-    "watch:ts": "onchange --initial --kill \"src/**/*.ts\" -- npm run build:ts"
+    "watch:ts": "onchange --initial --kill \"src/**/*.ts\" -- pnpm run build:ts"
   },
   "devDependencies": {}
 }

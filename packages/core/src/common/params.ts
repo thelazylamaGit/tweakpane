@@ -45,6 +45,14 @@ export interface NumberTextInputParams {
 	max?: number;
 	min?: number;
 	/**
+	 * The maximum value of the visual slider range.
+	 */
+	softMax?: number;
+	/**
+	 * The minimum value of the visual slider range.
+	 */
+	softMin?: number;
+	/**
 	 * The unit scale for pointer input.
 	 */
 	pointerScale?: number;
