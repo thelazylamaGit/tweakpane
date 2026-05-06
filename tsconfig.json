@@ -6,6 +6,7 @@
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"strict": true,
-		"target": "ES6"
+		"target": "ES6",
+		"types": []
 	}
 }

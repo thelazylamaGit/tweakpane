@@ -8,11 +8,7 @@ import {
 	PointerHandlerEvent,
 } from '../../view/pointer-handler.js';
 import {constrainRange, mapRange} from '../util.js';
-import {
-	getExpandedSliderRange,
-	SliderProps,
-	SliderView,
-} from '../view/slider.js';
+import {SliderProps, SliderView} from '../view/slider.js';
 
 /**
  * @hidden
@@ -31,8 +27,9 @@ export class SliderController implements ValueController<number, SliderView> {
 	public readonly view: SliderView;
 	public readonly viewProps: ViewProps;
 	public readonly props: SliderProps;
+
 	private readonly ptHandler_: PointerHandler;
-	private dragRange_: {max: number; min: number} | null = null;
+	private dragging_ = false;
 
 	constructor(doc: Document, config: Config) {
 		this.onKeyDown_ = this.onKeyDown_.bind(this);
@@ -40,10 +37,10 @@ export class SliderController implements ValueController<number, SliderView> {
 		this.onPointerDown_ = this.onPointerDown_.bind(this);
 		this.onPointerMove_ = this.onPointerMove_.bind(this);
 		this.onPointerUp_ = this.onPointerUp_.bind(this);
+		this.onValueChange_ = this.onValueChange_.bind(this);
 
 		this.value = config.value;
 		this.viewProps = config.viewProps;
-
 		this.props = config.props;
 
 		this.view = new SliderView(doc, {
@@ -52,6 +49,8 @@ export class SliderController implements ValueController<number, SliderView> {
 			viewProps: this.viewProps,
 		});
 
+		this.view.syncDisplayRange();
+
 		this.ptHandler_ = new PointerHandler(this.view.trackElement);
 		this.ptHandler_.emitter.on('down', this.onPointerDown_);
 		this.ptHandler_.emitter.on('move', this.onPointerMove_);
@@ -59,25 +58,17 @@ export class SliderController implements ValueController<number, SliderView> {
 
 		this.view.trackElement.addEventListener('keydown', this.onKeyDown_);
 		this.view.trackElement.addEventListener('keyup', this.onKeyUp_);
+
+		this.value.emitter.on('change', this.onValueChange_);
 	}
 
-	private getExpandedRange_(): {max: number; min: number} {
-		return getExpandedSliderRange(
-			this.value.rawValue,
-			this.props.get('min'),
-			this.props.get('max'),
-		);
-	}
-
-	private handlePointerEvent_(
-		d: PointerData,
-		opts: ValueChangeOptions,
-	): void {
+	private handlePointerEvent_(d: PointerData, opts: ValueChangeOptions): void {
 		if (!d.point) {
 			return;
 		}
 
-		const range = this.dragRange_ ?? this.getExpandedRange_();
+		const range = this.view.displayRange;
+
 		this.value.setRawValue(
 			mapRange(
 				constrainRange(d.point.x, 0, d.bounds.width),
@@ -91,7 +82,11 @@ export class SliderController implements ValueController<number, SliderView> {
 	}
 
 	private onPointerDown_(ev: PointerHandlerEvent): void {
-		this.dragRange_ = this.getExpandedRange_();
+		this.dragging_ = true;
+
+		// Important:
+		// Do not call syncDisplayRange() here.
+		// The current display range is the active drag limit.
 		this.handlePointerEvent_(ev.data, {
 			forceEmit: false,
 			last: false,
@@ -110,7 +105,9 @@ export class SliderController implements ValueController<number, SliderView> {
 			forceEmit: true,
 			last: true,
 		});
-		this.dragRange_ = null;
+
+		this.dragging_ = false;
+		this.view.syncDisplayRange();
 	}
 
 	private onKeyDown_(ev: KeyboardEvent): void {
@@ -121,6 +118,7 @@ export class SliderController implements ValueController<number, SliderView> {
 		if (step === 0) {
 			return;
 		}
+
 		this.value.setRawValue(this.value.rawValue + step, {
 			forceEmit: false,
 			last: false,
@@ -135,9 +133,20 @@ export class SliderController implements ValueController<number, SliderView> {
 		if (step === 0) {
 			return;
 		}
+
 		this.value.setRawValue(this.value.rawValue, {
 			forceEmit: true,
 			last: true,
 		});
+	}
+
+	private onValueChange_(ev: {options: ValueChangeOptions}): void {
+		if (this.dragging_) {
+			return;
+		}
+
+		if (ev.options.last) {
+			this.view.syncDisplayRange();
+		}
 	}
 }
