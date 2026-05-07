@@ -107,7 +107,13 @@ export class SliderController implements ValueController<number, SliderView> {
 		});
 
 		this.dragging_ = false;
-		this.view.syncDisplayRange();
+
+		const range = this.view.defaultRange;
+		const value = this.value.rawValue;
+
+		if (value >= range.min && value <= range.max) {
+			this.view.setDisplayRange(null);
+		}
 	}
 
 	private onKeyDown_(ev: KeyboardEvent): void {
