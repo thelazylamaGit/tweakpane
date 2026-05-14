@@ -160,6 +160,7 @@ export function createInputBindingController<In, Ex, P extends BaseInputParams>(
 	};
 
 	const params = parseRecord(args.params, (p) => ({
+		description: p.optional.string,
 		disabled: p.optional.boolean,
 		hidden: p.optional.boolean,
 		label: p.optional.string,
@@ -199,7 +200,7 @@ export function createInputBindingController<In, Ex, P extends BaseInputParams>(
 
 	// Input binding controller
 	return new InputBindingController(args.document, {
-		blade: createBlade(),
+		blade: createBlade(params?.description),
 		props: ValueMap.fromObject<LabelPropsObject>({
 			label: 'label' in args.params ? params?.label ?? null : args.target.key,
 		}),

@@ -9,7 +9,7 @@ import {BladeController} from './common/controller/blade.js';
 import {Blade, createBlade} from './common/model/blade.js';
 
 interface Acceptance<P extends BaseBladeParams> {
-	params: Omit<P, 'disabled' | 'hidden'>;
+	params: Omit<P, 'description' | 'disabled' | 'hidden'>;
 }
 
 interface ControllerArguments<P extends BaseBladeParams> {
@@ -50,15 +50,17 @@ export function createBladeController<P extends BaseBladeParams>(
 	}
 
 	const params = parseRecord(args.params, (p) => ({
+		description: p.optional.string,
 		disabled: p.optional.boolean,
 		hidden: p.optional.boolean,
 	}));
 
 	return plugin.controller({
-		blade: createBlade(),
+		blade: createBlade(params?.description),
 		document: args.document,
 		params: forceCast({
 			...ac.params,
+			description: params?.description,
 			disabled: params?.disabled,
 			hidden: params?.hidden,
 		}),

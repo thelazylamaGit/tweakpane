@@ -1,5 +1,6 @@
 import {Controller} from '../../../common/controller/controller.js';
 import {removeElement} from '../../../common/dom-util.js';
+import {bindValueMap} from '../../../common/model/reactive.js';
 import {ViewProps} from '../../../common/model/view-props.js';
 import {ClassName} from '../../../common/view/class-name.js';
 import {View} from '../../../common/view/view.js';
@@ -40,6 +41,14 @@ export class BladeController<V extends View = View> implements Controller<V> {
 		this.viewProps = config.viewProps;
 
 		const elem = this.view.element;
+		bindValueMap(this.blade, 'description', (description) => {
+			if (description) {
+				elem.title = description;
+			} else {
+				elem.removeAttribute('title');
+			}
+		});
+
 		this.blade.value('positions').emitter.on('change', () => {
 			getAllBladePositions().forEach((pos) => {
 				elem.classList.remove(cn(undefined, POS_TO_CLASS_NAME_MAP[pos]));

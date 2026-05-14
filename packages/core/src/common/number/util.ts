@@ -130,6 +130,7 @@ export function createNumberTextPropsObject(
 
 export function createNumberTextInputParamsParser(p: typeof MicroParsers) {
 	return {
+		description: p.optional.string,
 		format: p.optional.function as MicroParser<Formatter<number>>,
 		keyScale: p.optional.number,
 		max: p.optional.number,

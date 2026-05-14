@@ -25,6 +25,7 @@ function createAxisController<PointNd>(
 	return new NumberTextController(doc, {
 		arrayPosition:
 			index === 0 ? 'fst' : index === config.axes.length - 1 ? 'lst' : 'mid',
+		description: config.axes[index].description,
 		parser: config.parser,
 		props: config.axes[index].textProps,
 		value: createValue(0, {

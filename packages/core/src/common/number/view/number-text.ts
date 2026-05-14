@@ -28,6 +28,7 @@ interface NumberConfig {
 	viewProps: ViewProps;
 
 	arrayPosition?: 'fst' | 'mid' | 'lst';
+	description?: string;
 }
 
 const cn = ClassName('txt');
@@ -54,6 +55,9 @@ export class NumberTextView implements View, InputView {
 
 		this.element = doc.createElement('div');
 		this.element.classList.add(cn(), cn(undefined, 'num'));
+		if (config.description) {
+			this.element.title = config.description;
+		}
 		if (config.arrayPosition) {
 			this.element.classList.add(cn(undefined, config.arrayPosition));
 		}

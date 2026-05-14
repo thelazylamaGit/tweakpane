@@ -19,7 +19,8 @@ export function parsePointDimensionParams(
 	if (!isRecord(value)) {
 		return undefined;
 	}
-	return parseRecord(value, createPointDimensionParser);
+	const result = parseRecord(value, createPointDimensionParser);
+	return result ? removeUndefinedValues(result) : undefined;
 }
 
 export function createDimensionConstraint(
@@ -40,4 +41,16 @@ export function createDimensionConstraint(
 		constraints.push(rs);
 	}
 	return new CompositeConstraint(constraints);
+}
+
+export function removeUndefinedValues<T extends object>(params: T): T {
+	return (Object.keys(params) as (keyof T)[]).reduce((result, key) => {
+		const value = params[key];
+		return value === undefined
+			? result
+			: {
+					...result,
+					[key]: value,
+			  };
+	}, {} as T);
 }

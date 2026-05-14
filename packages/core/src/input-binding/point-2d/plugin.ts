@@ -9,10 +9,13 @@ import {getSuitableKeyScale} from '../../common/number/util.js';
 import {NumberTextInputParams} from '../../common/params.js';
 import {parsePickerLayout} from '../../common/picker-util.js';
 import {createPointAxis, PointAxis} from '../../common/point-nd/point-axis.js';
-import {createPointDimensionParser} from '../../common/point-nd/util.js';
-import {parsePointDimensionParams} from '../../common/point-nd/util.js';
-import {createDimensionConstraint} from '../../common/point-nd/util.js';
-import {deepMerge, isEmpty, Tuple2} from '../../misc/type-util.js';
+import {
+	createDimensionConstraint,
+	createPointDimensionParser,
+	parsePointDimensionParams,
+	removeUndefinedValues,
+} from '../../common/point-nd/util.js';
+import {deepMerge, isEmpty, isRecord, Tuple2} from '../../misc/type-util.js';
 import {createPlugin} from '../../plugin/plugin.js';
 import {PointNdConstraint} from '../common/constraint/point-nd.js';
 import {InputBindingPlugin} from '../plugin.js';
@@ -31,6 +34,20 @@ function createConstraint(
 			createDimensionConstraint({...params, ...params.y}, initialValue.y),
 		],
 	});
+}
+
+function parsePoint2dYParams(value: unknown): Point2dYParams | undefined {
+	if (!isRecord(value)) {
+		return undefined;
+	}
+	const result = parseRecord<Point2dYParams & Record<string, unknown>>(
+		value,
+		(p) => ({
+			...createPointDimensionParser(p),
+			inverted: p.optional.boolean,
+		}),
+	);
+	return result ? removeUndefinedValues(result) : undefined;
 }
 
 function getSuitableMaxDimensionValue(
@@ -93,10 +110,7 @@ export const Point2dInputPlugin: InputBindingPlugin<
 			picker: p.optional.custom(parsePickerLayout),
 			readonly: p.optional.constant(false),
 			x: p.optional.custom(parsePointDimensionParams),
-			y: p.optional.object<Point2dYParams & Record<string, unknown>>({
-				...createPointDimensionParser(p),
-				inverted: p.optional.boolean,
-			}),
+			y: p.optional.custom(parsePoint2dYParams),
 		}));
 		return result
 			? {

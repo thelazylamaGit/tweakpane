@@ -1,12 +1,17 @@
 import {Formatter} from './converter/formatter.js';
 
 export interface BaseParams {
+	description?: string;
 	disabled?: boolean;
 	hidden?: boolean;
 	index?: number;
 }
 
-export type ArrayStyleListOptions<T> = {text: string; value: T}[];
+export type ArrayStyleListOptions<T> = {
+	description?: string;
+	text: string;
+	value: T;
+}[];
 export type ObjectStyleListOptions<T> = {[text: string]: T};
 export type ListParamsOptions<T> =
 	| ArrayStyleListOptions<T>
@@ -37,6 +42,7 @@ export interface BaseMonitorParams
 export interface BaseBladeParams extends BaseParams, Record<string, unknown> {}
 
 export interface NumberTextInputParams {
+	description?: string;
 	format?: Formatter<number>;
 	/**
 	 * The unit scale for key input.

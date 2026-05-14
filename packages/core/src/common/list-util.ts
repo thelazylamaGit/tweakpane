@@ -15,6 +15,7 @@ export function parseListOptions<T>(
 		return parseRecord({items: value}, (p) => ({
 			items: p.required.array(
 				p.required.object({
+					description: p.optional.string,
 					text: p.required.string,
 					value: p.required.raw as MicroParser<T>,
 				}),

@@ -118,6 +118,7 @@ export interface FolderParams extends BaseParams {
 
 export interface TabParams extends BaseParams {
 	pages: {
+		description?: string;
 		title: string;
 	}[];
 }

@@ -13,6 +13,7 @@ import {TabItemPropsObject} from './view/tab-item.js';
 
 export interface TabBladeParams extends BaseBladeParams {
 	pages: {
+		description?: string;
 		title: string;
 	}[];
 	view: 'tab';
@@ -23,7 +24,12 @@ export const TabBladePlugin: BladePlugin<TabBladeParams> = createPlugin({
 	type: 'blade',
 	accept(params) {
 		const result = parseRecord<TabBladeParams>(params, (p) => ({
-			pages: p.required.array(p.required.object({title: p.required.string})),
+			pages: p.required.array(
+				p.required.object({
+					description: p.optional.string,
+					title: p.required.string,
+				}),
+			),
 			view: p.required.constant('tab'),
 		}));
 		if (!result || result.pages.length === 0) {
@@ -38,7 +44,7 @@ export const TabBladePlugin: BladePlugin<TabBladeParams> = createPlugin({
 		});
 		args.params.pages.forEach((p) => {
 			const pc = new TabPageController(args.document, {
-				blade: createBlade(),
+				blade: createBlade(p.description),
 				itemProps: ValueMap.fromObject<TabItemPropsObject>({
 					selected: false,
 					title: p.title,

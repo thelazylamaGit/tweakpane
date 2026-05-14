@@ -22,6 +22,7 @@ interface Config {
 	viewProps: ViewProps;
 
 	arrayPosition?: 'fst' | 'mid' | 'lst';
+	description?: string;
 }
 
 /**
@@ -54,6 +55,7 @@ export class NumberTextController
 		this.dragging_ = createValue<number | null>(null);
 		this.view = new NumberTextView(doc, {
 			arrayPosition: config.arrayPosition,
+			description: config.description,
 			dragging: this.dragging_,
 			props: this.props,
 			value: this.value,

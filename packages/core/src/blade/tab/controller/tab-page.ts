@@ -64,6 +64,13 @@ export class TabPageController extends ContainerBladeController<PlainView> {
 			viewProps: ViewProps.create(),
 		});
 		this.ic_.emitter.on('click', this.onItemClick_);
+		bindValueMap(config.blade, 'description', (description) => {
+			if (description) {
+				this.ic_.view.buttonElement.title = description;
+			} else {
+				this.ic_.view.buttonElement.removeAttribute('title');
+			}
+		});
 
 		this.props = config.props;
 		bindValueMap(this.props, 'selected', (selected) => {

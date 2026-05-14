@@ -62,6 +62,9 @@ export class ListView<T> implements View {
 
 			opts.forEach((item) => {
 				const optionElem = doc.createElement('option');
+				if (item.description) {
+					optionElem.title = item.description;
+				}
 				optionElem.textContent = item.text;
 				this.selectElement.appendChild(optionElem);
 			});

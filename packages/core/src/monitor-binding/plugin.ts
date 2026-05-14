@@ -147,6 +147,7 @@ export function createMonitorBindingController<T, P extends BaseMonitorParams>(
 
 	const params = parseRecord(args.params, (p) => ({
 		bufferSize: p.optional.number,
+		description: p.optional.string,
 		disabled: p.optional.boolean,
 		hidden: p.optional.boolean,
 		interval: p.optional.number,
@@ -186,7 +187,7 @@ export function createMonitorBindingController<T, P extends BaseMonitorParams>(
 
 	// Monitor binding controller
 	return new MonitorBindingController(args.document, {
-		blade: createBlade(),
+		blade: createBlade(params?.description),
 		props: ValueMap.fromObject<LabelPropsObject>({
 			label: 'label' in args.params ? params?.label ?? null : args.target.key,
 		}),

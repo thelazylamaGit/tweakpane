@@ -26,6 +26,14 @@ export class BladeApi<C extends BladeController = BladeController> {
 		this.controller.viewProps.set('disabled', disabled);
 	}
 
+	get description(): string | undefined {
+		return this.controller.blade.get('description') ?? undefined;
+	}
+
+	set description(description: string | undefined) {
+		this.controller.blade.set('description', description);
+	}
+
 	get hidden(): boolean {
 		return this.controller.viewProps.get('hidden');
 	}

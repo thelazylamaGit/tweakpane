@@ -6,6 +6,7 @@ import {PointDimensionParams} from '../params.js';
 
 export interface PointAxis {
 	constraint: Constraint<number> | undefined;
+	description: string | undefined;
 	textProps: NumberTextProps;
 }
 
@@ -16,6 +17,7 @@ export function createPointAxis(config: {
 }): PointAxis {
 	return {
 		constraint: config.constraint,
+		description: config.params.description,
 		textProps: ValueMap.fromObject(
 			createNumberTextPropsObject(config.params, config.initialValue),
 		),

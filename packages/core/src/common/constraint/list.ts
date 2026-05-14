@@ -2,6 +2,7 @@ import {ValueMap} from '../model/value-map.js';
 import {Constraint} from './constraint.js';
 
 export interface ListItem<T> {
+	description?: string;
 	text: string;
 	value: T;
 }

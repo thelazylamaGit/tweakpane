@@ -21,6 +21,7 @@ interface TabApiEvents {
 export interface TabPageParams {
 	title: string;
 
+	description?: string;
 	index?: number;
 }
 
@@ -55,7 +56,7 @@ export class TabApi
 	public addPage(params: TabPageParams): TabPageApi {
 		const doc = this.controller.view.element.ownerDocument;
 		const pc = new TabPageController(doc, {
-			blade: createBlade(),
+			blade: createBlade(params.description),
 			itemProps: ValueMap.fromObject<TabItemPropsObject>({
 				selected: false,
 				title: params.title,
